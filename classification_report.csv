@@ -1,0 +1,5 @@
+class,precision,recall,f1,support
+chin_tuck_correct,0.9481,0.9733,0.9605,75
+chin_tuck_incorrect,0.8750,0.7778,0.8235,18
+shoulder_abduction_correct,0.9340,0.9900,0.9612,100
+shoulder_abduction_incorrect,0.9474,0.7200,0.8182,25
