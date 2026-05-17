@@ -27,11 +27,11 @@ from reference_profile import (
     ReferenceProfile, load_profile, get_default_profile
 )
 
-from exercise_lstm_pipeline import (
-    ExerciseLSTMClassifier,
-    normalize_exercise_name,
-    perfect_rep_tips,
-)
+def normalize_exercise_name(name):
+    return name.lower().strip()
+
+def perfect_rep_tips(exercise_type):
+    return []
 
 # ==========================================
 # CONFIGURATION
