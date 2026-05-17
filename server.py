@@ -27,11 +27,11 @@ from reference_profile import (
     ReferenceProfile, load_profile, get_default_profile
 )
 
-def normalize_exercise_name(name):
-    return name.lower().strip()
-
-def perfect_rep_tips(exercise_type):
-    return []
+from exercise_lstm_pipeline import (
+    ExerciseLSTMClassifier,
+    normalize_exercise_name,
+    perfect_rep_tips,
+)
 
 # ==========================================
 # CONFIGURATION
@@ -139,8 +139,11 @@ class ExerciseProcessor:
         self.start_time = time.time() 
 
         self.profiles = {}
-        self.lstm_classifier = None
-        print("[System] LSTM classifier temporarily disabled for cloud deployment.")
+        self.lstm_classifier = ExerciseLSTMClassifier()
+        if self.lstm_classifier.enabled:
+            print("[System] LSTM correctness model loaded.")
+        else:
+            print(f"[System] LSTM correctness model disabled: {self.lstm_classifier.error}")
 
     def load_model(self):
         if self.detector is None:
@@ -330,9 +333,19 @@ class ExerciseProcessor:
             for lm in results.pose_landmarks[0]:
                 raw_list.append({"x": -lm.x, "y": lm.y, "z": lm.z, "vis": lm.visibility})
 
-        model_feedback = {
-        "enabled": False,
-        "ready": False}
+        model_feedback = {"enabled": False, "ready": False}
+        if results.pose_landmarks and len(results.pose_landmarks) > 0:
+            model_feedback = self.lstm_classifier.predict_from_frame(
+                exercise_type,
+                results.pose_landmarks[0],
+            )
+            if model_feedback.get("ready") and not model_feedback.get("is_correct", True):
+                model_message = model_feedback.get("message")
+                if model_message and model_message not in precautions:
+                    precautions.append(model_message)
+                for tip in perfect_rep_tips(exercise_type):
+                    if tip not in precautions:
+                        precautions.append(tip)
 
         json_packet = {
             "timestamp": int(time.time() * 1000),
@@ -402,7 +415,6 @@ def run_server():
     processor = ExerciseProcessor()
     frame_send_count = 0
     processor.load_profiles()
-    print("[System] PhysioGuide Backend Successfully Started On Railway")
     
     current_exercise = "shoulder_abduction" 
     is_recording = False
@@ -431,6 +443,7 @@ def run_server():
                         processor.state = "NEUTRAL"
                         processor.calibrated = False
                         processor.start_time = time.time()
+                        processor.lstm_classifier.reset(current_exercise)
                         recorded_frames = []
                         is_recording = True
                         processor.load_model()
@@ -452,8 +465,7 @@ def run_server():
                     control_socket.send_string(f"ERROR: {str(e)}")
 
             except zmq.Again:
-                time.sleep(0.01)
-                
+                pass
 
             json_packet, results = None, None
 

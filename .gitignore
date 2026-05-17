@@ -1,5 +1,18 @@
 __pycache__/
 *.pyc
+*.pyo
 .env
 venv/
 .venv/
+
+# Large training data — don't commit to Git
+chin_tuck.csv
+shoulder_abduction.csv
+training_log.csv
+training_curves.png
+training_metrics.json
+classification_report.csv
+confusion_matrix.csv
+
+# Downloaded at build time — don't commit
+pose_landmarker_lite.task

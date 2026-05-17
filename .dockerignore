@@ -1,0 +1,28 @@
+# ── Python cache ──────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ── Environment ───────────────────────────────────────
+.env
+venv/
+.venv/
+
+# ── Training data (large CSVs — not needed at runtime) ─
+chin_tuck.csv
+shoulder_abduction.csv
+
+# ── Training artifacts ────────────────────────────────
+training_curves.png
+training_log.csv
+training_metrics.json
+classification_report.csv
+confusion_matrix.csv
+train_lstm.py
+backup_server.py
+TRAINING_GUIDE.md
+
+# ── Legacy deployment files ───────────────────────────
+procfile
+runtime.txt
