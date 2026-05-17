@@ -45,9 +45,8 @@ else:
     base_path = os.path.dirname(os.path.abspath(__file__))
 PROFILES_DIR = os.path.join(base_path, "reference_profiles")
 
-MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task"
-MODEL_PATH = os.path.join(base_path, "pose_landmarker_heavy.task")
-
+MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
+MODEL_PATH = os.path.join(base_path, "pose_landmarker_lite.task")
 def download_model_if_needed():
     if not os.path.exists(MODEL_PATH):
         print(f"[System] Downloading {MODEL_PATH} (this might take a minute)...")
@@ -140,7 +139,7 @@ class ExerciseProcessor:
         self.start_time = time.time() 
 
         self.profiles = {}
-        self.lstm_classifier = ExerciseLSTMClassifier()
+        self.lstm_classifier = None
         if self.lstm_classifier.enabled:
             print("[System] LSTM correctness model loaded.")
         else:
