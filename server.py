@@ -332,15 +332,7 @@ class ExerciseProcessor:
 
         model_feedback = {
         "enabled": False,
-        "ready": False
-            }
-            if model_feedback.get("ready") and not model_feedback.get("is_correct", True):
-                model_message = model_feedback.get("message")
-                if model_message and model_message not in precautions:
-                    precautions.append(model_message)
-                for tip in perfect_rep_tips(exercise_type):
-                    if tip not in precautions:
-                        precautions.append(tip)
+        "ready": False}
 
         json_packet = {
             "timestamp": int(time.time() * 1000),
