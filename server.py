@@ -140,10 +140,7 @@ class ExerciseProcessor:
 
         self.profiles = {}
         self.lstm_classifier = None
-        if self.lstm_classifier.enabled:
-            print("[System] LSTM correctness model loaded.")
-        else:
-            print(f"[System] LSTM correctness model disabled: {self.lstm_classifier.error}")
+        print("[System] LSTM classifier temporarily disabled for cloud deployment.")
 
     def load_model(self):
         if self.detector is None:
@@ -333,12 +330,10 @@ class ExerciseProcessor:
             for lm in results.pose_landmarks[0]:
                 raw_list.append({"x": -lm.x, "y": lm.y, "z": lm.z, "vis": lm.visibility})
 
-        model_feedback = {"enabled": False, "ready": False}
-        if results.pose_landmarks and len(results.pose_landmarks) > 0:
-            model_feedback = self.lstm_classifier.predict_from_frame(
-                exercise_type,
-                results.pose_landmarks[0],
-            )
+        model_feedback = {
+        "enabled": False,
+        "ready": False
+            }
             if model_feedback.get("ready") and not model_feedback.get("is_correct", True):
                 model_message = model_feedback.get("message")
                 if model_message and model_message not in precautions:
@@ -443,7 +438,6 @@ def run_server():
                         processor.state = "NEUTRAL"
                         processor.calibrated = False
                         processor.start_time = time.time()
-                        processor.lstm_classifier.reset(current_exercise)
                         recorded_frames = []
                         is_recording = True
                         processor.load_model()
