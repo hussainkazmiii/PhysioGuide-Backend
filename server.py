@@ -402,6 +402,7 @@ def run_server():
     processor = ExerciseProcessor()
     frame_send_count = 0
     processor.load_profiles()
+    print("[System] PhysioGuide Backend Successfully Started On Railway")
     
     current_exercise = "shoulder_abduction" 
     is_recording = False
@@ -451,7 +452,8 @@ def run_server():
                     control_socket.send_string(f"ERROR: {str(e)}")
 
             except zmq.Again:
-                pass
+                time.sleep(0.01)
+                
 
             json_packet, results = None, None
 
